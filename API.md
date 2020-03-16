@@ -2,7 +2,7 @@
 GET /rest/v1/tasks
 
 # Create a new task
-POST /rest/v1/tasks/1234
+POST /rest/v1/tasks
 
 # Get an active task
 GET /rest/v1/tasks/1234
