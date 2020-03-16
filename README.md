@@ -1,4 +1,3 @@
-# Install Guid
 sudo easy_install pip
 
 pip install flask
