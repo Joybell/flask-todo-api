@@ -21,6 +21,7 @@ class Tasks(Resource):
         except Exception as e:
             return {'error': str(e)}
 
+    # Create a new task
     def post(self):
         try:
             body = request.get_json()
