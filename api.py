@@ -2,7 +2,7 @@
 from flask import Flask, request, jsonify
 from flask_restful import reqparse, abort, Api, Resource
 from datetime import datetime
-import service
+import module.service as service
 
 apiVersion = 'v1'
 
@@ -34,7 +34,7 @@ class Task(Resource):
     def __init__(self):
         self.service = service.Tasks()
 
-    # Get an active tasks
+    # Get an active task
     def get(self, task_id):
         try:
             result = self.service.get_active_task(task_id)
@@ -63,6 +63,7 @@ class TaskStatus(Resource):
     def __init__(self):
         self.service = service.Tasks()
 
+    # Update a task status
     def post(self, task_id, status):
         try:
             if status == 'close':
@@ -81,4 +82,4 @@ api.add_resource(Task, '/rest/' + apiVersion + '/tasks/<int:task_id>')
 api.add_resource(TaskStatus, '/rest/' + apiVersion + '/tasks/<int:task_id>/<string:status>')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug = True)
