@@ -1,6 +1,7 @@
 #-*-coding: utf-8-*-
 from flask import Flask, request, jsonify
 from flask_restful import reqparse, abort, Api, Resource
+from flask_cors import CORS, cross_origin
 from datetime import datetime
 import module.service as service
 
@@ -8,6 +9,7 @@ apiVersion = 'v1'
 
 app = Flask(__name__)
 api = Api(app)
+CORS(app)
 
 class Tasks(Resource):
     def __init__(self):
