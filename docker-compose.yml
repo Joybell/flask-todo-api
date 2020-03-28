@@ -16,4 +16,4 @@ services:
       MYSQL_USER: 'joybell'
       MYSQL_PASSWORD: '1234'
       MYSQL_ROOT_PASSWORD: '1234'
-      TZ: "Asia/Seoul"
+      TZ: 'Asia/Seoul'
