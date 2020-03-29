@@ -1,5 +1,15 @@
 # Flask Todo API
 
+## Mysql 설치
+> docker-compose up
+
+## Python Package 설치
+> pip3 install -r requirements.txt
+
+## 실행
+> python3 app.py
+
+
 sudo easy_install pip
 
 pip install flask
