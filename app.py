@@ -18,15 +18,21 @@ class Tasks(Resource):
 
     # Get active/close tasks
     def get(self):
-        try:    
+        try:
             task_status = request.args.get('task_status', 'active', type = str)
-            page = request.args.get('page', 1, type = int)      
+            task_title = request.args.get('task_title')
+            page = request.args.get('page', 1, type = int)
+          
+            params = dict()
+            params['task_status'] = task_status
+            params['task_title'] = task_title
+            params['page'] = page
             
             result = dict()
-            result['recordSet'] = self.service.get_tasks(task_status, page)
+            result['recordSet'] = self.service.get_tasks(params)
 
             if task_status == 'active':
-                rows = self.service.get_tasks_count(task_status)
+                rows = self.service.get_tasks_count(params)
                 result['totalCount'] = rows['totalCount']
 
             return jsonify(result)
@@ -57,9 +63,11 @@ class Task(Resource):
     # Upate a task
     def put(self, task_id):
         try:
-            body = request.get_json()
-            result = self.service.update_task(task_id, body['task_title'])
-            return jsonify(result)
+            if request.data:
+                req_data = request.get_json()    
+                result = self.service.update_task(task_id, req_data['task_title'])
+                self.service.update_pre_tasks(task_id, req_data['pre_tasks'])
+                return jsonify(result)
         except Exception as e:
             return {'error': str(e)}
 
@@ -80,6 +88,14 @@ class TaskStatus(Resource):
         try:
             if actionStatus == 'close':
                 task_status = 'closed'
+                
+                result = self.service.get_active_pre_tasks(task_id)
+                if len(result) > 0:
+                    err = dict()
+                    err['result_code'] = 'FAIL'
+                    err['message'] = '완료되지 않은 선행 이슈가 존재합니다.'
+
+                    return jsonify(err)
             elif actionStatus == 'reopen':
                 task_status = 'active'
 
@@ -88,10 +104,21 @@ class TaskStatus(Resource):
         except Exception as e:
             return {'error': str(e)} 
 
+class PreTasks(Resource):
+    def __init__(self):
+        self.service = service.Tasks()
+
+    def get(self):
+        try:
+            result = self.service.get_pre_tasks()
+            return jsonify(result)
+        except Exception as e:
+            return {'error': str(e)} 
 
 api.add_resource(Tasks, '/rest/' + apiVersion + '/tasks')
 api.add_resource(Task, '/rest/' + apiVersion + '/task/<int:task_id>')
 api.add_resource(TaskStatus, '/rest/' + apiVersion + '/task/<int:task_id>/<string:actionStatus>')
+api.add_resource(PreTasks, '/rest/' + apiVersion + '/pre_tasks')
 
 if __name__ == '__main__':
     app.run(debug = True)
